@@ -1,5 +1,4 @@
 require "analytics-js/version"
+require "analytics-js/engine"
 
-module AnalyticsJs
-  # Your code goes here...
-end
+module AnalyticsJs; end
