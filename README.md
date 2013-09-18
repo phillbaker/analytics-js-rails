@@ -22,6 +22,10 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+## Version
+
+The version of this gem reflects the Analytics.js version.
+
 ## Contributing
 
 Yes, please. Pull requests are very welcome. If it's not tested, we will not pull it.

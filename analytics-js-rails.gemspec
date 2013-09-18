@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Analytics::Js::Rails::VERSION
   spec.authors       = ["Phill Baker"]
   spec.email         = ["phill@generalassemb.ly"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{A self-hosted copy of Analytics.js, a wrapper for web analytics services, for the Ruby on Rails 3.1+ asset pipeline.}
+  spec.summary       = %q{Rails + your app + analytics.js = analytics in all the right places}
+  spec.homepage      = "https://github.com/phillbaker/analytics-js-rails"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
