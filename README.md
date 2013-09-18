@@ -20,7 +20,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Add this line to your application.html.erb, for example:
+
+    <%= render 'analytics-js/loader', providers: { 
+      'Google Analytics' => 'google_analytics_key',
+      'KISSmetrics' => 'kissmetrics_key'
+    } %> 
+
+Of course, keys should probably be stored in config files, not hard coded.
+
+Add to your ```config/environments/production.rb```:
+
+    config.assets.precompile += %w( analytics.js )
+
+
+You can now use rickshaw in your app.
 
 ## Version
 
