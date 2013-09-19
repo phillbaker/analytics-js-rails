@@ -49,7 +49,6 @@
   // also be async, since they will follow the loading.
   analytics.load(function () {
     analytics.initialize(<%= providers.to_json.html_safe %>);
-    
-    analytics.identify('<%= current_user.try(:id) %>')
+    <%= "analytics.identify('#{user_identifier}')" if defined?(user_identifier) %>
   });
 </script>
