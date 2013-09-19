@@ -1591,10 +1591,10 @@ require.register("segmentio-store.js/store.js", function(exports, require, modul
 var json             = require('json')
   , store            = {}
   , win              = window
-  , doc              = win.document
-  , localStorageName = 'localStorage'
-  , namespace        = '__storejs__'
-  , storage;
+	,	doc              = win.document
+	,	localStorageName = 'localStorage'
+	,	namespace        = '__storejs__'
+	,	storage;
 
 store.disabled = false
 store.set = function(key, value) {}
@@ -1602,139 +1602,139 @@ store.get = function(key) {}
 store.remove = function(key) {}
 store.clear = function() {}
 store.transact = function(key, defaultVal, transactionFn) {
-  var val = store.get(key)
-  if (transactionFn == null) {
-    transactionFn = defaultVal
-    defaultVal = null
-  }
-  if (typeof val == 'undefined') { val = defaultVal || {} }
-  transactionFn(val)
-  store.set(key, val)
+	var val = store.get(key)
+	if (transactionFn == null) {
+		transactionFn = defaultVal
+		defaultVal = null
+	}
+	if (typeof val == 'undefined') { val = defaultVal || {} }
+	transactionFn(val)
+	store.set(key, val)
 }
 store.getAll = function() {}
 
 store.serialize = function(value) {
-  return json.stringify(value)
+	return json.stringify(value)
 }
 store.deserialize = function(value) {
-  if (typeof value != 'string') { return undefined }
-  try { return json.parse(value) }
-  catch(e) { return value || undefined }
+	if (typeof value != 'string') { return undefined }
+	try { return json.parse(value) }
+	catch(e) { return value || undefined }
 }
 
 // Functions to encapsulate questionable FireFox 3.6.13 behavior
 // when about.config::dom.storage.enabled === false
 // See https://github.com/marcuswestin/store.js/issues#issue/13
 function isLocalStorageNameSupported() {
-  try { return (localStorageName in win && win[localStorageName]) }
-  catch(err) { return false }
+	try { return (localStorageName in win && win[localStorageName]) }
+	catch(err) { return false }
 }
 
 if (isLocalStorageNameSupported()) {
-  storage = win[localStorageName]
-  store.set = function(key, val) {
-    if (val === undefined) { return store.remove(key) }
-    storage.setItem(key, store.serialize(val))
-    return val
-  }
-  store.get = function(key) { return store.deserialize(storage.getItem(key)) }
-  store.remove = function(key) { storage.removeItem(key) }
-  store.clear = function() { storage.clear() }
-  store.getAll = function() {
-    var ret = {}
-    for (var i=0; i<storage.length; ++i) {
-      var key = storage.key(i)
-      ret[key] = store.get(key)
-    }
-    return ret
-  }
+	storage = win[localStorageName]
+	store.set = function(key, val) {
+		if (val === undefined) { return store.remove(key) }
+		storage.setItem(key, store.serialize(val))
+		return val
+	}
+	store.get = function(key) { return store.deserialize(storage.getItem(key)) }
+	store.remove = function(key) { storage.removeItem(key) }
+	store.clear = function() { storage.clear() }
+	store.getAll = function() {
+		var ret = {}
+		for (var i=0; i<storage.length; ++i) {
+			var key = storage.key(i)
+			ret[key] = store.get(key)
+		}
+		return ret
+	}
 } else if (doc.documentElement.addBehavior) {
-  var storageOwner,
-    storageContainer
-  // Since #userData storage applies only to specific paths, we need to
-  // somehow link our data to a specific path.  We choose /favicon.ico
-  // as a pretty safe option, since all browsers already make a request to
-  // this URL anyway and being a 404 will not hurt us here.  We wrap an
-  // iframe pointing to the favicon in an ActiveXObject(htmlfile) object
-  // (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
-  // since the iframe access rules appear to allow direct access and
-  // manipulation of the document element, even for a 404 page.  This
-  // document can be used instead of the current document (which would
-  // have been limited to the current path) to perform #userData storage.
-  try {
-    storageContainer = new ActiveXObject('htmlfile')
-    storageContainer.open()
-    storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></iframe>')
-    storageContainer.close()
-    storageOwner = storageContainer.w.frames[0].document
-    storage = storageOwner.createElement('div')
-  } catch(e) {
-    // somehow ActiveXObject instantiation failed (perhaps some special
-    // security settings or otherwse), fall back to per-path storage
-    storage = doc.createElement('div')
-    storageOwner = doc.body
-  }
-  function withIEStorage(storeFunction) {
-    return function() {
-      var args = Array.prototype.slice.call(arguments, 0)
-      args.unshift(storage)
-      // See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
-      // and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
-      storageOwner.appendChild(storage)
-      storage.addBehavior('#default#userData')
-      storage.load(localStorageName)
-      var result = storeFunction.apply(store, args)
-      storageOwner.removeChild(storage)
-      return result
-    }
-  }
+	var storageOwner,
+		storageContainer
+	// Since #userData storage applies only to specific paths, we need to
+	// somehow link our data to a specific path.  We choose /favicon.ico
+	// as a pretty safe option, since all browsers already make a request to
+	// this URL anyway and being a 404 will not hurt us here.  We wrap an
+	// iframe pointing to the favicon in an ActiveXObject(htmlfile) object
+	// (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
+	// since the iframe access rules appear to allow direct access and
+	// manipulation of the document element, even for a 404 page.  This
+	// document can be used instead of the current document (which would
+	// have been limited to the current path) to perform #userData storage.
+	try {
+		storageContainer = new ActiveXObject('htmlfile')
+		storageContainer.open()
+		storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></iframe>')
+		storageContainer.close()
+		storageOwner = storageContainer.w.frames[0].document
+		storage = storageOwner.createElement('div')
+	} catch(e) {
+		// somehow ActiveXObject instantiation failed (perhaps some special
+		// security settings or otherwse), fall back to per-path storage
+		storage = doc.createElement('div')
+		storageOwner = doc.body
+	}
+	function withIEStorage(storeFunction) {
+		return function() {
+			var args = Array.prototype.slice.call(arguments, 0)
+			args.unshift(storage)
+			// See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
+			// and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
+			storageOwner.appendChild(storage)
+			storage.addBehavior('#default#userData')
+			storage.load(localStorageName)
+			var result = storeFunction.apply(store, args)
+			storageOwner.removeChild(storage)
+			return result
+		}
+	}
 
-  // In IE7, keys may not contain special chars. See all of https://github.com/marcuswestin/store.js/issues/40
-  var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
-  function ieKeyFix(key) {
-    return key.replace(forbiddenCharsRegex, '___')
-  }
-  store.set = withIEStorage(function(storage, key, val) {
-    key = ieKeyFix(key)
-    if (val === undefined) { return store.remove(key) }
-    storage.setAttribute(key, store.serialize(val))
-    storage.save(localStorageName)
-    return val
-  })
-  store.get = withIEStorage(function(storage, key) {
-    key = ieKeyFix(key)
-    return store.deserialize(storage.getAttribute(key))
-  })
-  store.remove = withIEStorage(function(storage, key) {
-    key = ieKeyFix(key)
-    storage.removeAttribute(key)
-    storage.save(localStorageName)
-  })
-  store.clear = withIEStorage(function(storage) {
-    var attributes = storage.XMLDocument.documentElement.attributes
-    storage.load(localStorageName)
-    for (var i=0, attr; attr=attributes[i]; i++) {
-      storage.removeAttribute(attr.name)
-    }
-    storage.save(localStorageName)
-  })
-  store.getAll = withIEStorage(function(storage) {
-    var attributes = storage.XMLDocument.documentElement.attributes
-    var ret = {}
-    for (var i=0, attr; attr=attributes[i]; ++i) {
-      var key = ieKeyFix(attr.name)
-      ret[attr.name] = store.deserialize(storage.getAttribute(key))
-    }
-    return ret
-  })
+	// In IE7, keys may not contain special chars. See all of https://github.com/marcuswestin/store.js/issues/40
+	var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+	function ieKeyFix(key) {
+		return key.replace(forbiddenCharsRegex, '___')
+	}
+	store.set = withIEStorage(function(storage, key, val) {
+		key = ieKeyFix(key)
+		if (val === undefined) { return store.remove(key) }
+		storage.setAttribute(key, store.serialize(val))
+		storage.save(localStorageName)
+		return val
+	})
+	store.get = withIEStorage(function(storage, key) {
+		key = ieKeyFix(key)
+		return store.deserialize(storage.getAttribute(key))
+	})
+	store.remove = withIEStorage(function(storage, key) {
+		key = ieKeyFix(key)
+		storage.removeAttribute(key)
+		storage.save(localStorageName)
+	})
+	store.clear = withIEStorage(function(storage) {
+		var attributes = storage.XMLDocument.documentElement.attributes
+		storage.load(localStorageName)
+		for (var i=0, attr; attr=attributes[i]; i++) {
+			storage.removeAttribute(attr.name)
+		}
+		storage.save(localStorageName)
+	})
+	store.getAll = withIEStorage(function(storage) {
+		var attributes = storage.XMLDocument.documentElement.attributes
+		var ret = {}
+		for (var i=0, attr; attr=attributes[i]; ++i) {
+			var key = ieKeyFix(attr.name)
+			ret[attr.name] = store.deserialize(storage.getAttribute(key))
+		}
+		return ret
+	})
 }
 
 try {
-  store.set(namespace, namespace)
-  if (store.get(namespace) != namespace) { store.disabled = true }
-  store.remove(namespace)
+	store.set(namespace, namespace)
+	if (store.get(namespace) != namespace) { store.disabled = true }
+	store.remove(namespace)
 } catch(e) {
-  store.disabled = true
+	store.disabled = true
 }
 store.enabled = !store.disabled
 
@@ -3784,4 +3784,1795 @@ module.exports = Provider.extend({
     }
     if (options.initialPageview) {
       var path, canon = canonical();
-      if (canon)
+      if (canon) path = url.parse(canon).pathname;
+      this.pageview(path);
+    }
+
+    // URLs change if DoubleClick is on. Even though Google Analytics makes a
+    // queue, the `_gat` object isn't available until the library loads.
+    if (options.doubleClick) {
+      load('//stats.g.doubleclick.net/dc.js', ready);
+    } else {
+      load({
+        http  : 'http://www.google-analytics.com/ga.js',
+        https : 'https://ssl.google-analytics.com/ga.js'
+      }, ready);
+    }
+  },
+
+  initializeUniversal: function (options, ready) {
+
+    // GA-universal lets you set your own queue name
+    var global = this.global = 'ga';
+
+    // and needs to know about this queue name in this special object
+    // so that future plugins can also operate on the object
+    window['GoogleAnalyticsObject'] = global;
+
+    // setup the global variable
+    window[global] = window[global] || function () {
+      (window[global].q = window[global].q || []).push(arguments);
+    };
+
+    // GA also needs to know the current time (all from their snippet)
+    window[global].l = 1 * new Date();
+
+    var createOpts = {};
+
+    // Apply a bunch of optional settings.
+    if (options.domain)
+      createOpts.cookieDomain = options.domain || 'none';
+    if (type(options.siteSpeedSampleRate) === 'number')
+      createOpts.siteSpeedSampleRate = options.siteSpeedSampleRate;
+    if (options.anonymizeIp)
+      ga('set', 'anonymizeIp', true);
+
+    ga('create', options.trackingId, createOpts);
+
+    if (options.initialPageview) {
+      var path, canon = canonical();
+      if (canon) path = url.parse(canon).pathname;
+      this.pageview(path);
+    }
+
+    load('//www.google-analytics.com/analytics.js');
+
+    // Google makes a queue so it's ready immediately.
+    ready();
+  },
+
+  track : function (event, properties) {
+    properties || (properties = {});
+
+    var value;
+
+    // Since value is a common property name, ensure it is a number and Google
+    // requires that it be an integer.
+    if (type(properties.value) === 'number') value = Math.round(properties.value);
+
+    // Try to check for a `category` and `label`. A `category` is required,
+    // so if it's not there we use `'All'` as a default. We can safely push
+    // undefined if the special properties don't exist. Try using revenue
+    // first, but fall back to a generic `value` as well.
+    if (this.options.universalClient) {
+      var opts = {};
+      if (properties.noninteraction) opts.nonInteraction = properties.noninteraction;
+      window[this.global](
+        'send',
+        'event',
+        properties.category || 'All',
+        event,
+        properties.label,
+        Math.round(properties.revenue) || value,
+        opts
+      );
+    } else {
+      window._gaq.push([
+        '_trackEvent',
+        properties.category || 'All',
+        event,
+        properties.label,
+        Math.round(properties.revenue) || value,
+        properties.noninteraction
+      ]);
+    }
+  },
+
+  pageview : function (url) {
+    if (this.options.universalClient) {
+      window[this.global]('send', 'pageview', url);
+    } else {
+      window._gaq.push(['_trackPageview', url]);
+    }
+  }
+
+});
+});
+require.register("analytics/src/providers/gosquared.js", function(exports, require, module){
+// http://www.gosquared.com/support
+// https://www.gosquared.com/customer/portal/articles/612063-tracker-functions
+
+var Provider = require('../provider')
+  , user     = require('../user')
+  , load     = require('load-script')
+  , onBody   = require('on-body');
+
+
+module.exports = Provider.extend({
+
+  name : 'GoSquared',
+
+  key : 'siteToken',
+
+  defaults : {
+    siteToken : null
+  },
+
+  initialize : function (options, ready) {
+    // GoSquared assumes a body in their script, so we need this wrapper.
+    onBody(function () {
+      var GoSquared = window.GoSquared = {};
+      GoSquared.acct = options.siteToken;
+      GoSquared.q = [];
+      window._gstc_lt =+ (new Date());
+
+      GoSquared.VisitorName = user.id();
+      GoSquared.Visitor = user.traits();
+
+      load('//d1l6p2sc9645hc.cloudfront.net/tracker.js');
+
+      // GoSquared makes a queue, so it's ready immediately.
+      ready();
+    });
+  },
+
+  identify : function (userId, traits) {
+    // TODO figure out if this will actually work. Seems like GoSquared will
+    // never know these values are updated.
+    if (userId) window.GoSquared.UserName = userId;
+    if (traits) window.GoSquared.Visitor = traits;
+  },
+
+  track : function (event, properties) {
+    // GoSquared sets a `gs_evt_name` property with a value of the event
+    // name, so it relies on properties being an object.
+    window.GoSquared.q.push(['TrackEvent', event, properties || {}]);
+  },
+
+  pageview : function (url) {
+    window.GoSquared.q.push(['TrackView', url]);
+  }
+
+});
+});
+require.register("analytics/src/providers/heap.js", function(exports, require, module){
+// https://heapanalytics.com/docs
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+module.exports = Provider.extend({
+
+  name : 'Heap',
+
+  key : 'apiKey',
+
+  defaults : {
+    apiKey : null
+  },
+
+  initialize : function (options, ready) {
+    window.heap=window.heap||[];window.heap.load=function(a){window._heapid=a;var b=document.createElement("script");b.type="text/javascript",b.async=!0,b.src=("https:"===document.location.protocol?"https:":"http:")+"//d36lvucg9kzous.cloudfront.net";var c=document.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c);var d=function(a){return function(){heap.push([a].concat(Array.prototype.slice.call(arguments,0)))}},e=["identify","track"];for(var f=0;f<e.length;f++)heap[e[f]]=d(e[f])};
+    window.heap.load(options.apiKey);
+
+    // heap creates its own queue, so we're ready right away
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    window.heap.identify(traits);
+  },
+
+  track : function (event, properties) {
+    window.heap.track(event, properties);
+  }
+
+});
+});
+require.register("analytics/src/providers/hittail.js", function(exports, require, module){
+// http://www.hittail.com
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'HitTail',
+
+  key : 'siteId',
+
+  defaults : {
+    siteId : null
+  },
+
+  initialize : function (options, ready) {
+    load('//' + options.siteId + '.hittail.com/mlt.js', ready);
+  }
+
+});
+});
+require.register("analytics/src/providers/hubspot.js", function(exports, require, module){
+// http://hubspot.clarify-it.com/d/4m62hl
+
+var Provider = require('../provider')
+  , isEmail  = require('is-email')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'HubSpot',
+
+  key : 'portalId',
+
+  defaults : {
+    portalId : null
+  },
+
+  initialize : function (options, ready) {
+    // HubSpot checks in their snippet to make sure another script with
+    // `hs-analytics` isn't already in the DOM. Seems excessive, but who knows
+    // if there's weird deprecation going on :p
+    if (!document.getElementById('hs-analytics')) {
+      window._hsq = window._hsq || [];
+      var script = load('https://js.hubspot.com/analytics/' + (Math.ceil(new Date()/300000)*300000) + '/' + options.portalId + '.js');
+      script.id = 'hs-analytics';
+    }
+
+    // HubSpot makes a queue, so it's ready immediately.
+    ready();
+  },
+
+  // HubSpot does not use a userId, but the email address is required on
+  // the traits object.
+  identify : function (userId, traits) {
+    window._hsq.push(["identify", traits]);
+  },
+
+  // Event Tracking is available to HubSpot Enterprise customers only. In
+  // addition to adding any unique event name, you can also use the id of an
+  // existing custom event as the event variable.
+  track : function (event, properties) {
+    window._hsq.push(["trackEvent", event, properties]);
+  },
+
+  // HubSpot doesn't support passing in a custom URL.
+  pageview : function (url) {
+    window._hsq.push(['_trackPageview']);
+  }
+
+});
+});
+require.register("analytics/src/providers/index.js", function(exports, require, module){
+module.exports = [
+  require('./adroll'),
+  require('./amplitude'),
+  require('./bitdeli'),
+  require('./bugherd'),
+  require('./chartbeat'),
+  require('./clicktale'),
+  require('./clicky'),
+  require('./comscore'),
+  require('./crazyegg'),
+  require('./customerio'),
+  require('./errorception'),
+  require('./foxmetrics'),
+  require('./gauges'),
+  require('./get-satisfaction'),
+  require('./google-analytics'),
+  require('./gosquared'),
+  require('./heap'),
+  require('./hittail'),
+  require('./hubspot'),
+  require('./improvely'),
+  require('./intercom'),
+  require('./keen-io'),
+  require('./kissmetrics'),
+  require('./klaviyo'),
+  require('./livechat'),
+  require('./lytics'),
+  require('./mixpanel'),
+  require('./olark'),
+  require('./optimizely'),
+  require('./perfect-audience'),
+  require('./pingdom'),
+  require('./preact'),
+  require('./qualaroo'),
+  require('./quantcast'),
+  require('./sentry'),
+  require('./snapengage'),
+  require('./usercycle'),
+  require('./userfox'),
+  require('./uservoice'),
+  require('./vero'),
+  require('./visual-website-optimizer'),
+  require('./woopra')
+];
+
+});
+require.register("analytics/src/providers/improvely.js", function(exports, require, module){
+// http://www.improvely.com/docs/landing-page-code
+// http://www.improvely.com/docs/conversion-code
+// http://www.improvely.com/docs/labeling-visitors
+
+var Provider = require('../provider')
+  , alias    = require('alias')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Improvely',
+
+  defaults : {
+    // Improvely requires two options: `domain` and `projectId`.
+    domain : null,
+    projectId : null
+  },
+
+  initialize : function (options, ready) {
+    window._improvely = window._improvely || [];
+    window.improvely = window.improvely || {
+      init  : function (e, t) { window._improvely.push(["init", e, t]); },
+      goal  : function (e) { window._improvely.push(["goal", e]); },
+      label : function (e) { window._improvely.push(["label", e]); }
+    };
+
+    load('//' + options.domain + '.iljmp.com/improvely.js');
+    window.improvely.init(options.domain, options.projectId);
+
+    // Improvely creates a queue, so it's ready immediately.
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    if (userId) window.improvely.label(userId);
+  },
+
+  track : function (event, properties) {
+    // Improvely calls `revenue` `amount`, and puts the `event` in properties as
+    // the `type`.
+    properties || (properties = {});
+    properties.type = event;
+    alias(properties, { 'revenue' : 'amount' });
+    window.improvely.goal(properties);
+  }
+
+});
+
+});
+require.register("analytics/src/providers/intercom.js", function(exports, require, module){
+// http://docs.intercom.io/
+// http://docs.intercom.io/#IntercomJS
+
+var Provider = require('../provider')
+  , extend   = require('extend')
+  , load     = require('load-script')
+  , isEmail  = require('is-email');
+
+
+module.exports = Provider.extend({
+
+  name : 'Intercom',
+
+  // Whether Intercom has already been booted or not. Intercom becomes booted
+  // after Intercom('boot', ...) has been called on the first identify.
+  booted : false,
+
+  key : 'appId',
+
+  defaults : {
+    // Intercom's required key.
+    appId : null,
+    // An optional setting to display the Intercom inbox widget.
+    activator : null,
+    // Whether to show the count of messages for the inbox widget.
+    counter : true
+  },
+
+  initialize : function (options, ready) {
+    load('https://static.intercomcdn.com/intercom.v1.js', ready);
+  },
+
+  identify : function (userId, traits, options) {
+    // Don't do anything if we just have traits the first time.
+    if (!this.booted && !userId) return;
+
+    // Intercom specific settings. BACKWARDS COMPATIBILITY: we need to check for
+    // the lowercase variant as well.
+    options || (options = {});
+    var Intercom = options.Intercom || options.intercom || {};
+    traits.increments = Intercom.increments;
+    traits.user_hash = Intercom.userHash || Intercom.user_hash;
+
+    // They need `created_at` as a Unix timestamp (seconds).
+    if (traits.created) {
+      traits.created_at = Math.floor(traits.created/1000);
+      delete traits.created;
+    }
+
+    // Convert a `company`'s `created` date.
+    if (traits.company && traits.company.created) {
+      traits.company.created_at = Math.floor(traits.company.created/1000);
+      delete traits.company.created;
+    }
+
+    // Optionally add the inbox widget.
+    if (this.options.activator) {
+      traits.widget = {
+        activator   : this.options.activator,
+        use_counter : this.options.counter
+      };
+    }
+
+    // If this is the first time we've identified, `boot` instead of `update`
+    // and add our one-time boot settings.
+    if (this.booted) {
+      window.Intercom('update', traits);
+    } else {
+      extend(traits, {
+        app_id  : this.options.appId,
+        user_id : userId
+      });
+      window.Intercom('boot', traits);
+    }
+
+    // Set the booted state, so that we know to call 'update' next time.
+    this.booted = true;
+  },
+
+  // Intercom doesn't have a separate `group` method, but they take a
+  // `companies` trait for the user.
+  group : function (groupId, properties, options) {
+    properties.id = groupId;
+    window.Intercom('update', { company : properties });
+  }
+
+});
+
+});
+require.register("analytics/src/providers/keen-io.js", function(exports, require, module){
+// https://keen.io/docs/
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Keen IO',
+
+  defaults : {
+    // The Project ID is **required**.
+    projectId : null,
+    // The Write Key is **required** to send events.
+    writeKey : null,
+    // The Read Key is optional, only if you want to "do analysis".
+    readKey : null,
+    // Whether or not to pass pageviews on to Keen IO.
+    pageview : true,
+    // Whether or not to track an initial pageview on `initialize`.
+    initialPageview : true
+  },
+
+  initialize : function (options, ready) {
+    window.Keen = window.Keen||{configure:function(e){this._cf=e},addEvent:function(e,t,n,i){this._eq=this._eq||[],this._eq.push([e,t,n,i])},setGlobalProperties:function(e){this._gp=e},onChartsReady:function(e){this._ocrq=this._ocrq||[],this._ocrq.push(e)}};
+    window.Keen.configure({
+      projectId : options.projectId,
+      writeKey  : options.writeKey,
+      readKey   : options.readKey
+    });
+
+    load('//dc8na2hxrj29i.cloudfront.net/code/keen-2.1.0-min.js');
+
+    if (options.initialPageview) this.pageview();
+
+    // Keen IO defines all their functions in the snippet, so they're ready.
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    // Use Keen IO global properties to include `userId` and `traits` on
+    // every event sent to Keen IO.
+    var globalUserProps = {};
+    if (userId) globalUserProps.userId = userId;
+    if (traits) globalUserProps.traits = traits;
+    if (userId || traits) {
+      window.Keen.setGlobalProperties(function(eventCollection) {
+        return { user: globalUserProps };
+      });
+    }
+  },
+
+  track : function (event, properties) {
+    window.Keen.addEvent(event, properties);
+  },
+
+  pageview : function (url) {
+    if (!this.options.pageview) return;
+
+    var properties = {
+      url  : url || document.location.href,
+      name : document.title
+    };
+
+    this.track('Loaded a Page', properties);
+  }
+
+});
+});
+require.register("analytics/src/providers/kissmetrics.js", function(exports, require, module){
+// http://support.kissmetrics.com/apis/javascript
+
+var Provider = require('../provider')
+  , alias    = require('alias')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'KISSmetrics',
+
+  key : 'apiKey',
+
+  defaults : {
+    apiKey : null
+  },
+
+  initialize : function (options, ready) {
+    window._kmq = window._kmq || [];
+    load('//i.kissmetrics.com/i.js');
+    load('//doug1izaerwt3.cloudfront.net/' + options.apiKey + '.1.js');
+
+    // KISSmetrics creates a queue, so it's ready immediately.
+    ready();
+  },
+
+  // KISSmetrics uses two separate methods: `identify` for storing the
+  // `userId`, and `set` for storing `traits`.
+  identify : function (userId, traits) {
+    if (userId) window._kmq.push(['identify', userId]);
+    if (traits) window._kmq.push(['set', traits]);
+  },
+
+  track : function (event, properties) {
+    // KISSmetrics handles revenue with the `'Billing Amount'` property by
+    // default, although it's changeable in the interface.
+    if (properties) {
+      alias(properties, {
+        'revenue' : 'Billing Amount'
+      });
+    }
+
+    window._kmq.push(['record', event, properties]);
+  },
+
+  // Although undocumented, KISSmetrics actually supports not passing a second
+  // ID, in which case it uses the currenty identified user's ID.
+  alias : function (newId, originalId) {
+    window._kmq.push(['alias', newId, originalId]);
+  }
+
+});
+});
+require.register("analytics/src/providers/klaviyo.js", function(exports, require, module){
+// https://www.klaviyo.com/docs
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Klaviyo',
+
+  key : 'apiKey',
+
+  defaults : {
+    apiKey : null
+  },
+
+  initialize : function (options, ready) {
+    window._learnq = window._learnq || [];
+    window._learnq.push(['account', options.apiKey]);
+    load('//a.klaviyo.com/media/js/learnmarklet.js');
+
+    // Klaviyo creats a queue, so it's ready immediately.
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    // Klaviyo requires a `userId` and takes the it on the traits object itself.
+    if (!userId) return;
+    traits.$id = userId;
+    window._learnq.push(['identify', traits]);
+  },
+
+  track : function (event, properties) {
+    window._learnq.push(['track', event, properties]);
+  }
+
+});
+});
+require.register("analytics/src/providers/livechat.js", function(exports, require, module){
+// http://www.livechatinc.com/api/javascript-api
+
+var Provider = require('../provider')
+  , each     = require('each')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'LiveChat',
+
+  key : 'license',
+
+  defaults : {
+    license : null
+  },
+
+  initialize : function (options, ready) {
+    window.__lc = { license : options.license };
+    load('//cdn.livechatinc.com/tracking.js', ready);
+  },
+
+  // LiveChat isn't an analytics service, but we can use the `userId` and
+  // `traits` to tag the user with their real name in the chat console.
+  identify : function (userId, traits) {
+    // In case the LiveChat library hasn't loaded yet.
+    if (!window.LC_API) return;
+
+    // LiveChat takes them in an array format.
+    var variables = [];
+
+    if (userId) variables.push({ name: 'User ID', value: userId });
+    if (traits) {
+      each(traits, function (key, value) {
+        variables.push({
+          name  : key,
+          value : value
+        });
+      });
+    }
+
+    window.LC_API.set_custom_variables(variables);
+  }
+
+});
+});
+require.register("analytics/src/providers/lytics.js", function(exports, require, module){
+// Lytics
+// --------
+// [Documentation](http://developer.lytics.io/doc#jstag),
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Lytics',
+
+  key : 'cid',
+
+  defaults : {
+    cid: null
+  },
+
+  initialize : function (options, ready) {
+    window.jstag = (function () {
+      var t={_q:[],_c:{cid:options.cid,url:'//c.lytics.io'},ts:(new Date()).getTime()};
+      t.send=function(){
+      this._q.push(["ready","send",Array.prototype.slice.call(arguments)]);
+      return this;
+      };
+      return t;
+    })();
+
+    load('//c.lytics.io/static/io.min.js');
+
+    ready();
+  },
+
+  identify: function (userId, traits) {
+    traits._uid = userId;
+    window.jstag.send(traits);
+  },
+
+  track: function (event, properties) {
+    properties._e = event;
+    window.jstag.send(properties);
+  },
+
+  pageview: function (url) {
+    window.jstag.send();
+  }
+
+});
+});
+require.register("analytics/src/providers/mixpanel.js", function(exports, require, module){
+// https://mixpanel.com/docs/integration-libraries/javascript
+// https://mixpanel.com/docs/people-analytics/javascript
+// https://mixpanel.com/docs/integration-libraries/javascript-full-api
+
+var Provider = require('../provider')
+  , alias    = require('alias')
+  , isEmail  = require('is-email')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Mixpanel',
+
+  key : 'token',
+
+  defaults : {
+    // Whether to call `mixpanel.nameTag` on `identify`.
+    nameTag : true,
+    // Whether to use Mixpanel's People API.
+    people : false,
+    // The Mixpanel API token for your account.
+    token : null,
+    // Whether to track pageviews to Mixpanel.
+    pageview : false,
+    // Whether to track an initial pageview on initialize.
+    initialPageview : false,
+    // A custom cookie name to use
+    cookieName : null
+  },
+
+  initialize : function (options, ready) {
+    (function (c, a) {
+        window.mixpanel = a;
+        var b, d, h, e;
+        a._i = [];
+        a.init = function (b, c, f) {
+          function d(a, b) {
+            var c = b.split('.');
+            2 == c.length && (a = a[c[0]], b = c[1]);
+            a[b] = function () {
+                a.push([b].concat(Array.prototype.slice.call(arguments, 0)));
+            };
+          }
+          var g = a;
+          'undefined' !== typeof f ? g = a[f] = [] : f = 'mixpanel';
+          g.people = g.people || [];
+          h = ['disable', 'track', 'track_pageview', 'track_links', 'track_forms', 'register', 'register_once', 'unregister', 'identify', 'alias', 'name_tag', 'set_config', 'people.set', 'people.increment', 'people.track_charge', 'people.append'];
+          for (e = 0; e < h.length; e++) d(g, h[e]);
+          a._i.push([b, c, f]);
+        };
+        a.__SV = 1.2;
+        // Modification to the snippet: call ready whenever the library has
+        // fully loaded.
+        load('//cdn.mxpnl.com/libs/mixpanel-2.2.min.js', ready);
+    })(document, window.mixpanel || []);
+
+    // Mixpanel only accepts snake_case options
+    options.cookie_name = options.cookieName;
+
+    // Pass options directly to `init` as the second argument.
+    window.mixpanel.init(options.token, options);
+
+    if (options.initialPageview) this.pageview();
+  },
+
+  identify : function (userId, traits) {
+    // Alias the traits' keys with dollar signs for Mixpanel's API.
+    alias(traits, {
+      'created'   : '$created',
+      'email'     : '$email',
+      'firstName' : '$first_name',
+      'lastName'  : '$last_name',
+      'lastSeen'  : '$last_seen',
+      'name'      : '$name',
+      'username'  : '$username',
+      'phone'     : '$phone'
+    });
+
+    // Finally, call all of the identify equivalents. Verify certain calls
+    // against options to make sure they're enabled.
+    if (userId) {
+      window.mixpanel.identify(userId);
+      if (this.options.nameTag) window.mixpanel.name_tag(traits && traits.$email || userId);
+    }
+    if (traits) {
+      window.mixpanel.register(traits);
+      if (this.options.people) window.mixpanel.people.set(traits);
+    }
+  },
+
+  track : function (event, properties) {
+    window.mixpanel.track(event, properties);
+
+    // Mixpanel handles revenue with a `transaction` call in their People
+    // feature. So if we're using people, record a transcation.
+    if (properties && properties.revenue && this.options.people) {
+      window.mixpanel.people.track_charge(properties.revenue);
+    }
+  },
+
+  // Mixpanel doesn't actually track the pageviews, but they do show up in the
+  // Mixpanel stream.
+  pageview : function (url) {
+    window.mixpanel.track_pageview(url);
+
+    // If they don't want pageviews tracked, leave now.
+    if (!this.options.pageview) return;
+
+    var properties = {
+      url  : url || document.location.href,
+      name : document.title
+    };
+
+    this.track('Loaded a Page', properties);
+  },
+
+  // Although undocumented, Mixpanel actually supports the `originalId`. It
+  // just usually defaults to the current user's `distinct_id`.
+  alias : function (newId, originalId) {
+
+    if(window.mixpanel.get_distinct_id &&
+       window.mixpanel.get_distinct_id() === newId) return;
+
+    // HACK: internal mixpanel API to ensure we don't overwrite.
+    if(window.mixpanel.get_property &&
+       window.mixpanel.get_property('$people_distinct_id') === newId) return;
+
+    window.mixpanel.alias(newId, originalId);
+  }
+
+});
+});
+require.register("analytics/src/providers/olark.js", function(exports, require, module){
+// http://www.olark.com/documentation
+
+var Provider = require('../provider')
+  , isEmail  = require('is-email');
+
+
+module.exports = Provider.extend({
+
+  name : 'Olark',
+
+  key : 'siteId',
+
+  chatting : false,
+
+  defaults : {
+    siteId : null,
+    // Whether to use the user's name or email in the Olark chat console.
+    identify : true,
+    // Whether to log pageviews to the Olark chat console.
+    track : false,
+    // Whether to log pageviews to the Olark chat console.
+    pageview : true
+  },
+
+  initialize : function (options, ready) {
+    window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){f[z]=function(){(a.s=a.s||[]).push(arguments)};var a=f[z]._={},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={0:+new Date};a.P=function(u){a.p[u]=new Date-a.p[0]};function s(){a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{b.contentWindow[g].open()}catch(w){c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{var t=b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
+    window.olark.identify(options.siteId);
+
+    // Set up event handlers for chat box open and close so that
+    // we know whether a conversation is active. If it is active,
+    // then we'll send track and pageview information.
+    var self = this;
+    window.olark('api.box.onExpand', function () { self.chatting = true; });
+    window.olark('api.box.onShrink', function () { self.chatting = false; });
+
+    // Olark creates it's method in the snippet, so it's ready immediately.
+    ready();
+  },
+
+  // Update traits about the user in Olark to make the operator's life easier.
+  identify : function (userId, traits) {
+    if (!this.options.identify) return;
+
+    var email    = traits.email
+      , name     = traits.name || traits.firstName
+      , phone    = traits.phone
+      , nickname = name || email || userId;
+
+    // If we have a name and an email, add the email too to be more helpful.
+    if (name && email) nickname += ' ('+email+')';
+
+    // Call all of Olark's settings APIs.
+    window.olark('api.visitor.updateCustomFields', traits);
+    if (email)    window.olark('api.visitor.updateEmailAddress', { emailAddress : email });
+    if (name)     window.olark('api.visitor.updateFullName', { fullName : name });
+    if (phone)    window.olark('api.visitor.updatePhoneNumber', { phoneNumber : phone });
+    if (nickname) window.olark('api.chat.updateVisitorNickname', { snippet : nickname });
+  },
+
+  // Log events the user triggers to the chat console, if you so desire it.
+  track : function (event, properties) {
+    if (!this.options.track || !this.chatting) return;
+
+    // To stay consistent with olark's default messages, it's all lowercase.
+    window.olark('api.chat.sendNotificationToOperator', {
+      body : 'visitor triggered "'+event+'"'
+    });
+  },
+
+  // Mimic the functionality Olark has for normal pageviews with pseudo-
+  // pageviews, telling the operator when a visitor changes pages.
+  pageview : function (url) {
+    if (!this.options.pageview || !this.chatting) return;
+
+    // To stay consistent with olark's default messages, it's all lowercase.
+    window.olark('api.chat.sendNotificationToOperator', {
+      body : 'looking at ' + window.location.href
+    });
+  }
+
+});
+});
+require.register("analytics/src/providers/optimizely.js", function(exports, require, module){
+// https://www.optimizely.com/docs/api
+
+var each      = require('each')
+  , nextTick  = require('next-tick')
+  , Provider  = require('../provider');
+
+
+module.exports = Provider.extend({
+
+  name : 'Optimizely',
+
+  defaults : {
+    // Whether to replay variations into other enabled integrations as traits.
+    variations : true
+  },
+
+  initialize : function (options, ready, analytics) {
+    // Create the `optimizely` object in case it doesn't exist already.
+    // https://www.optimizely.com/docs/api#function-calls
+    window.optimizely = window.optimizely || [];
+
+    // If the `variations` option is true, replay our variations on the next
+    // tick to wait for the entire library to be ready for replays.
+    if (options.variations) {
+      var self = this;
+      nextTick(function () { self.replay(); });
+    }
+
+    // Optimizely should be on the page already, so it's always ready.
+    ready();
+  },
+
+  track : function (event, properties) {
+    // Optimizely takes revenue as cents, not dollars.
+    if (properties && properties.revenue) properties.revenue = properties.revenue * 100;
+
+    window.optimizely.push(['trackEvent', event, properties]);
+  },
+
+  replay : function () {
+    // Make sure we have access to Optimizely's `data` dictionary.
+    var data = window.optimizely.data;
+    if (!data) return;
+
+    // Grab a few pieces of data we'll need for replaying.
+    var experiments       = data.experiments
+      , variationNamesMap = data.state.variationNamesMap;
+
+    // Create our traits object to add variations to.
+    var traits = {};
+
+    // Loop through all the experiement the user has been assigned a variation
+    // for and add them to our traits.
+    each(variationNamesMap, function (experimentId, variation) {
+      traits['Experiment: ' + experiments[experimentId].name] = variation;
+    });
+
+    this.analytics.identify(traits);
+  }
+
+});
+});
+require.register("analytics/src/providers/perfect-audience.js", function(exports, require, module){
+// https://www.perfectaudience.com/docs#javascript_api_autoopen
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Perfect Audience',
+
+  key : 'siteId',
+
+  defaults : {
+    siteId : null
+  },
+
+  initialize : function (options, ready) {
+    window._pa || (window._pa = {});
+    load('//tag.perfectaudience.com/serve/' + options.siteId + '.js', ready);
+  },
+
+  track : function (event, properties) {
+    window._pa.track(event, properties);
+  }
+
+});
+});
+require.register("analytics/src/providers/pingdom.js", function(exports, require, module){
+var date     = require('load-date')
+  , Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Pingdom',
+
+  key : 'id',
+
+  defaults : {
+    id : null
+  },
+
+  initialize : function (options, ready) {
+
+    window._prum = [
+      ['id', options.id],
+      ['mark', 'firstbyte', date.getTime()]
+    ];
+
+    // We've replaced the original snippet loader with our own load method.
+    load('//rum-static.pingdom.net/prum.min.js', ready);
+  }
+
+});
+});
+require.register("analytics/src/providers/preact.js", function(exports, require, module){
+// http://www.preact.io/api/javascript
+
+var Provider = require('../provider')
+  , isEmail  = require('is-email')
+  , load     = require('load-script');
+
+module.exports = Provider.extend({
+
+  name : 'Preact',
+
+  key : 'projectCode',
+
+  defaults : {
+    projectCode    : null
+  },
+
+  initialize : function (options, ready) {
+    var _lnq = window._lnq = window._lnq || [];
+    _lnq.push(["_setCode", options.projectCode]);
+
+    load('//d2bbvl6dq48fa6.cloudfront.net/js/ln-2.4.min.js');
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    // Don't do anything if we just have traits. Preact requires a `userId`.
+    if (!userId) return;
+
+    // Swap the `created` trait to the `created_at` that Preact needs
+    // and convert it from milliseconds to seconds.
+    if (traits.created) {
+      traits.created_at = Math.floor(traits.created/1000);
+      delete traits.created;
+    }
+
+    window._lnq.push(['_setPersonData', {
+      name       : traits.name,
+      email      : traits.email,
+      uid        : userId,
+      properties : traits
+    }]);
+  },
+
+  group : function (groupId, properties) {
+    if (!groupId) return;
+    properties.id = groupId;
+    window._lnq.push(['_setAccount', properties]);
+  },
+
+  track : function (event, properties) {
+    properties || (properties = {});
+
+    // Preact takes a few special properties, and the rest in `extras`. So first
+    // convert and remove the special ones from `properties`.
+    var special = { name : event };
+
+    // They take `revenue` in cents.
+    if (properties.revenue) {
+      special.revenue = properties.revenue * 100;
+      delete properties.revenue;
+    }
+
+    if (properties.note) {
+      special.note = properties.note;
+      delete properties.note;
+    }
+
+    window._lnq.push(['_logEvent', special, properties]);
+  }
+
+});
+});
+require.register("analytics/src/providers/qualaroo.js", function(exports, require, module){
+// http://help.qualaroo.com/customer/portal/articles/731085-identify-survey-nudge-takers
+// http://help.qualaroo.com/customer/portal/articles/731091-set-additional-user-properties
+
+var Provider = require('../provider')
+  , isEmail  = require('is-email')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Qualaroo',
+
+  defaults : {
+    // Qualaroo has two required options.
+    customerId : null,
+    siteToken : null,
+    // Whether to record traits when a user triggers an event. This can be
+    // useful for sending targetted questionnaries.
+    track : false
+  },
+
+  // Qualaroo's script has two options in its URL.
+  initialize : function (options, ready) {
+    window._kiq = window._kiq || [];
+    load('//s3.amazonaws.com/ki.js/' + options.customerId + '/' + options.siteToken + '.js');
+
+    // Qualaroo creates a queue, so it's ready immediately.
+    ready();
+  },
+
+  // Qualaroo uses two separate methods: `identify` for storing the `userId`,
+  // and `set` for storing `traits`.
+  identify : function (userId, traits) {
+    var identity = traits.email || userId;
+    if (identity) window._kiq.push(['identify', identity]);
+    if (traits) window._kiq.push(['set', traits]);
+  },
+
+  // Qualaroo doesn't have `track` method yet, but to allow the users to do
+  // targetted questionnaires we can set name-value pairs on the user properties
+  // that apply to the current visit.
+  track : function (event, properties) {
+    if (!this.options.track) return;
+
+    // Create a name-value pair that will be pretty unique. For an event like
+    // 'Loaded a Page' this will make it 'Triggered: Loaded a Page'.
+    var traits = {};
+    traits['Triggered: ' + event] = true;
+
+    // Fire a normal identify, with traits only.
+    this.identify(null, traits);
+  }
+
+});
+});
+require.register("analytics/src/providers/quantcast.js", function(exports, require, module){
+// https://www.quantcast.com/learning-center/guides/using-the-quantcast-asynchronous-tag/
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Quantcast',
+
+  key : 'pCode',
+
+  defaults : {
+    pCode : null
+  },
+
+  initialize : function (options, ready) {
+    window._qevents = window._qevents || [];
+    window._qevents.push({ qacct: options.pCode });
+    load({
+      http  : 'http://edge.quantserve.com/quant.js',
+      https : 'https://secure.quantserve.com/quant.js'
+    }, ready);
+  }
+
+});
+});
+require.register("analytics/src/providers/sentry.js", function(exports, require, module){
+// http://raven-js.readthedocs.org/en/latest/config/index.html
+
+var Provider = require('../provider')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Sentry',
+
+  key : 'config',
+
+  defaults : {
+    config : null
+  },
+
+  initialize : function (options, ready) {
+    load('//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js', function () {
+      // For now, Raven basically requires `install` to be called.
+      // https://github.com/getsentry/raven-js/blob/master/src/raven.js#L87
+      window.Raven.config(options.config).install();
+      ready();
+    });
+  },
+
+  identify : function (userId, traits) {
+    traits.id = userId;
+    window.Raven.setUser(traits);
+  },
+
+  // Raven will automatically use `captureMessage` if the error is a string.
+  log : function (error, properties) {
+    window.Raven.captureException(error, properties);
+  }
+
+});
+});
+require.register("analytics/src/providers/snapengage.js", function(exports, require, module){
+// http://help.snapengage.com/installation-guide-getting-started-in-a-snap/
+
+var Provider = require('../provider')
+  , isEmail  = require('is-email')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'SnapEngage',
+
+  key : 'apiKey',
+
+  defaults : {
+    apiKey : null
+  },
+
+  initialize : function (options, ready) {
+    load('//commondatastorage.googleapis.com/code.snapengage.com/js/' + options.apiKey + '.js', ready);
+  },
+
+  // Set the email in the chat window if we have it.
+  identify : function (userId, traits, options) {
+    if (!traits.email) return;
+    window.SnapABug.setUserEmail(traits.email);
+  }
+
+});
+});
+require.register("analytics/src/providers/usercycle.js", function(exports, require, module){
+// http://docs.usercycle.com/javascript_api
+
+var Provider = require('../provider')
+  , load     = require('load-script')
+  , user     = require('../user');
+
+
+module.exports = Provider.extend({
+
+  name : 'USERcycle',
+
+  key : 'key',
+
+  defaults : {
+    key : null
+  },
+
+  initialize : function (options, ready) {
+    window._uc = window._uc || [];
+    window._uc.push(['_key', options.key]);
+    load('//api.usercycle.com/javascripts/track.js');
+
+    // USERcycle makes a queue, so it's ready immediately.
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    if (userId) window._uc.push(['uid', userId]);
+
+    // USERcycle has a special "hidden" event that is used just for retention measurement.
+    // Lukas suggested on 6/4/2013 that we send traits on that event, since they use the
+    // the latest value of every event property as a "trait"
+    window._uc.push(['action', 'came_back', traits]);
+  },
+
+  track : function (event, properties) {
+    window._uc.push(['action', event, properties]);
+  }
+
+});
+});
+require.register("analytics/src/providers/userfox.js", function(exports, require, module){
+// https://www.userfox.com/docs/
+
+var Provider = require('../provider')
+  , extend   = require('extend')
+  , load     = require('load-script')
+  , isEmail  = require('is-email');
+
+
+module.exports = Provider.extend({
+
+  name : 'userfox',
+
+  key : 'clientId',
+
+  defaults : {
+    // userfox's required key.
+    clientId : null
+  },
+
+  initialize : function (options, ready) {
+    window._ufq = window._ufq || [];
+    load('//d2y71mjhnajxcg.cloudfront.net/js/userfox-stable.js');
+
+    // userfox creates its own queue, so we're ready right away.
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    if (!traits.email) return;
+
+    // Initialize the library with the email now that we have it.
+    window._ufq.push(['init', {
+      clientId : this.options.clientId,
+      email    : traits.email
+    }]);
+
+    // Record traits to "track" if we have the required signup date `created`.
+    // userfox takes `signup_date` as a string of seconds since the epoch.
+    if (traits.created) {
+      traits.signup_date = (traits.created.getTime() / 1000).toString();
+      delete traits.created;
+      window._ufq.push(['track', traits]);
+    }
+  }
+
+});
+
+});
+require.register("analytics/src/providers/uservoice.js", function(exports, require, module){
+// http://feedback.uservoice.com/knowledgebase/articles/225-how-do-i-pass-custom-data-through-the-widget-and-i
+
+var Provider = require('../provider')
+  , load     = require('load-script')
+  , alias    = require('alias')
+  , clone    = require('clone');
+
+
+module.exports = Provider.extend({
+
+  name : 'UserVoice',
+
+  defaults : {
+    // These first two options are required.
+    widgetId          : null,
+    forumId           : null,
+    // Should we show the tab automatically?
+    showTab           : true,
+    // There's tons of options for the tab.
+    mode              : 'full',
+    primaryColor      : '#cc6d00',
+    linkColor         : '#007dbf',
+    defaultMode       : 'support',
+    tabLabel          : 'Feedback & Support',
+    tabColor          : '#cc6d00',
+    tabPosition       : 'middle-right',
+    tabInverted       : false
+  },
+
+  initialize : function (options, ready) {
+    window.UserVoice = window.UserVoice || [];
+    load('//widget.uservoice.com/' + options.widgetId + '.js', ready);
+
+    var optionsClone = clone(options);
+    alias(optionsClone, {
+      'forumId'         : 'forum_id',
+      'primaryColor'    : 'primary_color',
+      'linkColor'       : 'link_color',
+      'defaultMode'     : 'default_mode',
+      'tabLabel'        : 'tab_label',
+      'tabColor'        : 'tab_color',
+      'tabPosition'     : 'tab_position',
+      'tabInverted'     : 'tab_inverted'
+    });
+
+    // If we don't automatically show the tab, let them show it via
+    // javascript. This is the default name for the function in their snippet.
+    window.showClassicWidget = function (showWhat) {
+      window.UserVoice.push([showWhat || 'showLightbox', 'classic_widget', optionsClone]);
+    };
+
+    // If we *do* automatically show the tab, get on with it!
+    if (options.showTab) {
+      window.showClassicWidget('showTab');
+    }
+  },
+
+  identify : function (userId, traits) {
+    // Pull the ID into traits.
+    traits.id = userId;
+    window.UserVoice.push(['setCustomFields', traits]);
+  }
+
+});
+});
+require.register("analytics/src/providers/vero.js", function(exports, require, module){
+// https://github.com/getvero/vero-api/blob/master/sections/js.md
+
+var Provider = require('../provider')
+  , isEmail  = require('is-email')
+  , load     = require('load-script');
+
+
+module.exports = Provider.extend({
+
+  name : 'Vero',
+
+  key : 'apiKey',
+
+  defaults : {
+    apiKey : null
+  },
+
+  initialize : function (options, ready) {
+    window._veroq = window._veroq || [];
+    window._veroq.push(['init', { api_key: options.apiKey }]);
+    load('//d3qxef4rp70elm.cloudfront.net/m.js');
+
+    // Vero creates a queue, so it's ready immediately.
+    ready();
+  },
+
+  identify : function (userId, traits) {
+    // Don't do anything if we just have traits, because Vero
+    // requires a `userId`.
+    if (!userId || !traits.email) return;
+
+    // Vero takes the `userId` as part of the traits object.
+    traits.id = userId;
+
+    window._veroq.push(['user', traits]);
+  },
+
+  track : function (event, properties) {
+    window._veroq.push(['track', event, properties]);
+  }
+
+});
+});
+require.register("analytics/src/providers/visual-website-optimizer.js", function(exports, require, module){
+// http://v2.visualwebsiteoptimizer.com/tools/get_tracking_code.php
+// http://visualwebsiteoptimizer.com/knowledge/integration-of-vwo-with-kissmetrics/
+
+var each = require('each')
+  , inherit = require('inherit')
+  , nextTick = require('next-tick')
+  , Provider = require('../provider');
+
+
+/**
+ * Expose `VWO`.
+ */
+
+module.exports = VWO;
+
+
+/**
+ * `VWO` inherits from the generic `Provider`.
+ */
+
+function VWO () {
+  Provider.apply(this, arguments);
+}
+
+inherit(VWO, Provider);
+
+
+/**
+ * Name.
+ */
+
+VWO.prototype.name = 'Visual Website Optimizer';
+
+
+/**
+ * Default options.
+ */
+
+VWO.prototype.defaults = {
+  // Whether to replay variations into other integrations as traits.
+  replay : true
+};
+
+
+/**
+ * Initialize.
+ */
+
+VWO.prototype.initialize = function (options, ready) {
+  if (options.replay) this.replay();
+  ready();
+};
+
+
+/**
+ * Replay the experiments the user has seen as traits to all other integrations.
+ * Wait for the next tick to replay so that the `analytics` object and all of
+ * the integrations are fully initialized.
+ */
+
+VWO.prototype.replay = function () {
+  var analytics = this.analytics;
+  nextTick(function () {
+    experiments(function (err, traits) {
+      if (traits) analytics.identify(traits);
+    });
+  });
+};
+
+
+/**
+ * Get dictionary of experiment keys and variations.
+ * http://visualwebsiteoptimizer.com/knowledge/integration-of-vwo-with-kissmetrics/
+ *
+ * @param  {Function} callback  Called with `err, experiments`.
+ * @return {Object}             Dictionary of experiments and variations.
+ */
+
+function experiments (callback) {
+  enqueue(function () {
+    var data = {};
+    var ids = window._vwo_exp_ids;
+    if (!ids) return callback();
+    each(ids, function (id) {
+      var name = variation(id);
+      if (name) data['Experiment: ' + id] = name;
+    });
+    callback(null, data);
+  });
+}
+
+
+/**
+ * Add a function to the VWO queue, creating one if it doesn't exist.
+ *
+ * @param {Function} fn  Function to enqueue.
+ */
+
+function enqueue (fn) {
+  window._vis_opt_queue || (window._vis_opt_queue = []);
+  window._vis_opt_queue.push(fn);
+}
+
+
+/**
+ * Get the chosen variation's name from an experiment `id`.
+ * http://visualwebsiteoptimizer.com/knowledge/integration-of-vwo-with-kissmetrics/
+ *
+ * @param  {String} id  ID of the experiment to read.
+ * @return {String}     Variation name.
+ */
+
+function variation (id) {
+  var experiments = window._vwo_exp;
+  if (!experiments) return null;
+  var experiment = experiments[id];
+  var variationId = experiment.combination_chosen;
+  return variationId ? experiment.comb_n[variationId] : null;
+}
+});
+require.register("analytics/src/providers/woopra.js", function(exports, require, module){
+// http://www.woopra.com/docs/setup/javascript-tracking/
+
+var Provider = require('../provider')
+  , each     = require('each')
+  , extend   = require('extend')
+  , isEmail  = require('is-email')
+  , load     = require('load-script')
+  , type     = require('type')
+  , user     = require('../user');
+
+
+module.exports = Provider.extend({
+
+  name : 'Woopra',
+
+  key : 'domain',
+
+  defaults : {
+    domain : null
+  },
+
+  initialize : function (options, ready) {
+    // Woopra gives us a nice ready callback.
+    var self = this;
+
+    window.woopraReady = function (tracker) {
+      tracker.setDomain(self.options.domain);
+      tracker.setIdleTimeout(300000);
+
+      var userId = user.id()
+        , traits = user.traits();
+
+      addTraits(userId, traits, tracker);
+      tracker.track();
+
+      ready();
+      return false;
+    };
+
+    load('//static.woopra.com/js/woopra.js');
+  },
+
+  identify : function (userId, traits) {
+    // We aren't guaranteed a tracker.
+    if (!window.woopraTracker) return;
+    addTraits(userId, traits, window.woopraTracker);
+  },
+
+  track : function (event, properties) {
+    // We aren't guaranteed a tracker.
+    if (!window.woopraTracker) return;
+
+    // Woopra takes its `event` as the `name` key.
+    properties || (properties = {});
+    properties.name = event;
+
+    window.woopraTracker.pushEvent(properties);
+  }
+
+});
+
+
+/**
+ * Convenience function for updating the userId and traits.
+ *
+ * @param {String} userId    The user's ID.
+ * @param {Object} traits    The user's traits.
+ * @param {Tracker} tracker  The Woopra tracker object.
+ */
+
+function addTraits (userId, traits, tracker) {
+  // Move a `userId` into `traits`.
+  if (userId) traits.id = userId;
+  each(traits, function (key, value) {
+    // Woopra seems to only support strings as trait values.
+    if ('string' === type(value)) tracker.addVisitorProperty(key, value);
+  });
+}
+});
+require.alias("avetisk-defaults/index.js", "analytics/deps/defaults/index.js");
+require.alias("avetisk-defaults/index.js", "defaults/index.js");
+
+require.alias("component-clone/index.js", "analytics/deps/clone/index.js");
+require.alias("component-clone/index.js", "clone/index.js");
+require.alias("component-type/index.js", "component-clone/deps/type/index.js");
+
+require.alias("component-cookie/index.js", "analytics/deps/cookie/index.js");
+require.alias("component-cookie/index.js", "cookie/index.js");
+
+require.alias("component-each/index.js", "analytics/deps/each/index.js");
+require.alias("component-each/index.js", "each/index.js");
+require.alias("component-type/index.js", "component-each/deps/type/index.js");
+
+require.alias("component-event/index.js", "analytics/deps/event/index.js");
+require.alias("component-event/index.js", "event/index.js");
+
+require.alias("component-inherit/index.js", "analytics/deps/inherit/index.js");
+require.alias("component-inherit/index.js", "inherit/index.js");
+
+require.alias("component-object/index.js", "analytics/deps/object/index.js");
+require.alias("component-object/index.js", "object/index.js");
+
+require.alias("component-querystring/index.js", "analytics/deps/querystring/index.js");
+require.alias("component-querystring/index.js", "querystring/index.js");
+require.alias("component-trim/index.js", "component-querystring/deps/trim/index.js");
+
+require.alias("component-type/index.js", "analytics/deps/type/index.js");
+require.alias("component-type/index.js", "type/index.js");
+
+require.alias("component-url/index.js", "analytics/deps/url/index.js");
+require.alias("component-url/index.js", "url/index.js");
+
+require.alias("segmentio-after/index.js", "analytics/deps/after/index.js");
+require.alias("segmentio-after/index.js", "after/index.js");
+
+require.alias("segmentio-alias/index.js", "analytics/deps/alias/index.js");
+require.alias("segmentio-alias/index.js", "alias/index.js");
+
+require.alias("segmentio-bind-all/index.js", "analytics/deps/bind-all/index.js");
+require.alias("segmentio-bind-all/index.js", "analytics/deps/bind-all/index.js");
+require.alias("segmentio-bind-all/index.js", "bind-all/index.js");
+require.alias("component-bind/index.js", "segmentio-bind-all/deps/bind/index.js");
+
+require.alias("component-type/index.js", "segmentio-bind-all/deps/type/index.js");
+
+require.alias("segmentio-bind-all/index.js", "segmentio-bind-all/index.js");
+
+require.alias("segmentio-canonical/index.js", "analytics/deps/canonical/index.js");
+require.alias("segmentio-canonical/index.js", "canonical/index.js");
+
+require.alias("segmentio-extend/index.js", "analytics/deps/extend/index.js");
+require.alias("segmentio-extend/index.js", "extend/index.js");
+
+require.alias("segmentio-is-email/index.js", "analytics/deps/is-email/index.js");
+require.alias("segmentio-is-email/index.js", "is-email/index.js");
+
+require.alias("segmentio-is-meta/index.js", "analytics/deps/is-meta/index.js");
+require.alias("segmentio-is-meta/index.js", "is-meta/index.js");
+
+require.alias("segmentio-json/index.js", "analytics/deps/json/index.js");
+require.alias("segmentio-json/index.js", "json/index.js");
+require.alias("component-json-fallback/index.js", "segmentio-json/deps/json-fallback/index.js");
+
+require.alias("segmentio-load-date/index.js", "analytics/deps/load-date/index.js");
+require.alias("segmentio-load-date/index.js", "load-date/index.js");
+
+require.alias("segmentio-load-script/index.js", "analytics/deps/load-script/index.js");
+require.alias("segmentio-load-script/index.js", "load-script/index.js");
+require.alias("component-type/index.js", "segmentio-load-script/deps/type/index.js");
+
+require.alias("segmentio-new-date/index.js", "analytics/deps/new-date/index.js");
+require.alias("segmentio-new-date/index.js", "new-date/index.js");
+require.alias("segmentio-type/index.js", "segmentio-new-date/deps/type/index.js");
+
+require.alias("segmentio-on-body/index.js", "analytics/deps/on-body/index.js");
+require.alias("segmentio-on-body/index.js", "on-body/index.js");
+require.alias("component-each/index.js", "segmentio-on-body/deps/each/index.js");
+require.alias("component-type/index.js", "component-each/deps/type/index.js");
+
+require.alias("segmentio-store.js/store.js", "analytics/deps/store/store.js");
+require.alias("segmentio-store.js/store.js", "analytics/deps/store/index.js");
+require.alias("segmentio-store.js/store.js", "store/index.js");
+require.alias("segmentio-json/index.js", "segmentio-store.js/deps/json/index.js");
+require.alias("component-json-fallback/index.js", "segmentio-json/deps/json-fallback/index.js");
+
+require.alias("segmentio-store.js/store.js", "segmentio-store.js/index.js");
+
+require.alias("segmentio-top-domain/index.js", "analytics/deps/top-domain/index.js");
+require.alias("segmentio-top-domain/index.js", "analytics/deps/top-domain/index.js");
+require.alias("segmentio-top-domain/index.js", "top-domain/index.js");
+require.alias("component-url/index.js", "segmentio-top-domain/deps/url/index.js");
+
+require.alias("segmentio-top-domain/index.js", "segmentio-top-domain/index.js");
+
+require.alias("timoxley-next-tick/index.js", "analytics/deps/next-tick/index.js");
+require.alias("timoxley-next-tick/index.js", "next-tick/index.js");
+
+require.alias("yields-prevent/index.js", "analytics/deps/prevent/index.js");
+require.alias("yields-prevent/index.js", "prevent/index.js");
+
+require.alias("analytics/src/index.js", "analytics/index.js");
+
+if (typeof exports == "object") {
+  module.exports = require("analytics");
+} else if (typeof define == "function" && define.amd) {
+  define(function(){ return require("analytics"); });
+} else {
+  this["analytics"] = require("analytics");
+}})();
