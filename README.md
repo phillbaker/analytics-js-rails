@@ -20,12 +20,14 @@ Or install it yourself as:
 
 ## Usage
 
-Add this line to your application.html.erb, for example:
+Render the loader partial on all pages where you want Analytics.js to load. Typically this is done in application.html.erb, immediately after the opening <body> tag. For example:
 
-    <%= render 'analytics-js/loader', providers: { 
-      'Google Analytics' => 'google_analytics_key',
-      'KISSmetrics' => 'kissmetrics_key'
-    } %> 
+    <%= render 'analytics-js/loader', 
+      user_identifier: current_user.id, 
+      providers: { 
+        'Google Analytics' => 'google_analytics_key',
+        'KISSmetrics' => 'kissmetrics_key'
+    } %>
 
 Of course, keys should probably be stored in config files, not hard coded.
 
@@ -33,8 +35,7 @@ Add to your ```config/environments/production.rb```:
 
     config.assets.precompile += %w( analytics.js )
 
-
-You can now use rickshaw in your app.
+You can now use Analytics.js in your app.
 
 ## Version
 
