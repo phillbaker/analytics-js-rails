@@ -1,8 +1,8 @@
 # Analytics.js-Rails
 
-A self-hosted copy of [Analytics.js](https://github.com/segmentio/analytics.js), a wrapper for web analytics services, for the Ruby on Rails 3.1+ asset pipeline.
+This gem packages a self-hosted copy of [Analytics.js](https://github.com/segmentio/analytics.js), a wrapper for web analytics services, for use with the Ruby on Rails 3.1+ asset pipeline.
 
-Service A is good at X and Service B is good at Y, unfortunate but true. Use one common interface to standardize and modularize analytics setup across services.
+The unfortunate truch: Analytics Service A is good at X, bad at Y, Analytics Service B is good at Y, bad at X and Z. Or maybe Marketing likes Service A, but Engineering needs Service B. Whatever. Analytics.js offers one common interface to standardize and modularize analytics setup across services - now easily in rails.
 
 ## Installation
 
@@ -31,6 +31,8 @@ Render the loader partial on all pages where you want Analytics.js to load. Typi
 
 Of course, keys should probably be stored in config files, not hard coded.
 
+Make sure that you ```root :to => "controller#action"``` in ```config/routes.rb```.
+
 Add to your ```config/environments/production.rb```:
 
     config.assets.precompile += %w( analytics.js )
@@ -40,6 +42,10 @@ You can now use Analytics.js in your app.
 ## Version
 
 The version of this gem reflects the Analytics.js version.
+
+## Thanks
+
+To the folks at [segment.io](http://segment.io) for all their work on Analytics.js - to a more panoptical world!
 
 ## Contributing
 
