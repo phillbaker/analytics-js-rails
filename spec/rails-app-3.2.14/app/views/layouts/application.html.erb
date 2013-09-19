@@ -7,7 +7,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<%= render 'analytics-js/loader', providers: { 
+<%= render 'analytics-js/loader', :providers => { 
       'Google Analytics' => 'google_analytics_key',
       'KISSmetrics' => 'kissmetrics_key'
     } %> 
