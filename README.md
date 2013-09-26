@@ -1,4 +1,5 @@
 # Analytics.js-Rails
+[![Build Status](https://travis-ci.org/phillbaker/analytics-js-rails.png?branch=master)](https://travis-ci.org/phillbaker/analytics-js-rails)
 
 This gem packages a self-hosted copy of [Analytics.js](https://github.com/segmentio/analytics.js), a wrapper for web analytics services, for use with the Ruby on Rails 3.1+ asset pipeline.
 
